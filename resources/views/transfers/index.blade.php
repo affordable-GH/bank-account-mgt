@@ -30,17 +30,12 @@
                 <table class="table align-middle">
                     <thead class="text-uppercase">
                         <tr>
-                            <th>
-                                {{-- <div class="form-check">
-                                    <input readonly class="form-check-input" id="check-all-accounts" type="checkbox" />
-                                </div> --}}
-                            </th>
+                            <th>S/N </th>
                             <th scope="col">from account</th>
                             <th scope="col">to account</th>
-                            <th scope="col">account type</th>
+                            <th scope="col" title="TRANSFER TYPE">trans. type</th>
                             <th scope="col">description</th>
-                            <th scope="col">debit</th>
-                            <th scope="col">credit</th>
+                            <th scope="col" title="TRANSFER AMOUNT">amount</th>
                             {{-- <th scope="col">ref. number</th> --}}
                             <th scope="col">date</th>
                             <th scope="col">actions</th>
@@ -48,31 +43,37 @@
                     </thead>
                     <tbody>
                         @forelse ($transfers as $transfer)
-                            <tr class="border-bottom border-{{ $transfer->transferType->type === "debit" ? "danger" : "success" }}">
-                                {{-- <td>
-                                    <div class="form-check-inline">
-                                        <input class="form-check-input check-account" value="{{ $transfer->id }}"
-                                            type="checkbox" />
-                                    </div>
-                                </td> --}}
-                                <td>{{ $transfer->fromAccount->bank_name }}</td>
-                                <td>{{ $transfer->toAccount->bank_name }}</td>
-                                <td>{{ $transfer->notes }}</td>
+                            <tr class="border-bottom">
                                 <td>
-                                    @if ($transfer->transferType->type === 'debit')
-                                        {{ $transfer->amount }}
-                                    @endif
+                                    {{ $loop->iteration }}
+                                </td>
+                                <td>{{ $transfer->fromAccount->name . ' (' . $transfer->fromAccount->accountLocation->name . ')' }}
+                                </td>
+                                <td>{{ $transfer->toAccount->name . ' (' . $transfer->toAccount->accountLocation->name . ')' }}
                                 </td>
                                 <td>
-                                    @if ($transfer->transferType->type === 'credit')
-                                        {{ $transfer->amount }}
-                                    @endif
+                                    <span class="btn btn-secondary">
+                                        {{ $transfer->transferType->type }}
+                                    </span>
+                                </td>
+                                <td>{{ $transfer->notes }}</td>
+                                <td>
+                                    <span class="currency">
+                                        {{ number_format($transfer->amount, 2, '.', ',') }}
+                                    </span>
                                 </td>
                                 {{-- <td>{{ $transfer->reference_number }}</td> --}}
                                 <td>{{ Carbon::parse($transfer->created_at)->format('Y-m-d') }}</td>
                                 <td>
-                                    <a title="view" class="btn" href="#"><i class="fas fa-eye"></i></a>
-                                    <a title="edit" class="btn" href="#"><i class="fas fa-pen-to-square"></i></a>
+                                    <a title="Edit" class="btn p-1 text-warning"
+                                        href="{{ route('transfers.edit', [$account_location->id, $transfer->id]) }}">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button title="Delete" data-id="{{ $transfer->id }}"
+                                        data-url="{{ route('transfers.destroy', [$account_location->id, $transfer->id]) }}"
+                                        class="btn text-danger p-1 mx-1 delete-transfer" href="#">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
                                 </td>
                             </tr>
 

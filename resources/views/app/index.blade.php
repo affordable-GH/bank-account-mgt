@@ -30,20 +30,21 @@
         <div class="row">
             <h6 class="text-center fw-bold text-uppercase">Accounts locations & balances</h6>
             @forelse ($account_locations as $location)
-                <div class="col-md-4 gy-2 w-25">
+                <div class="col-md-4 gy-2" style="min-width: 280px;">
                     <a href="{{ route('account.home', $location->id) }}">
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title fw-bold text-start text-uppercase">
-                                    {{ $location->name . ' (' . $location->accounts->count() . ')' }}</h4>
-                                    <p class="card-start mb-0 pb-0 fw-semibold">Accounts Balances</p>
-                                    <div class="d-flex justify-content-between">
-                                        <h6
-                                            class="mb-0 fs-5 text-nowrap text-{{ $location->accounts->sum('balance') < 0 ? 'danger' : 'success' }}">
-                                            <i class="currency"></i>
-                                            {{ number_format($location->accounts->sum('balance'), 2) }}
-                                        </h6>
-                                    </div>
+                                    {{ $location->name }}</h4>
+                                <p class="card-start mb-0 pb-0 fw-semibold">Accounts Balances
+                                    {{ ' (' . $location->accounts->count() . ')' }}</p>
+                                <div class="d-flex justify-content-between">
+                                    <h6
+                                        class="mb-0 fs-5 text-nowrap text-{{ $location->accounts->sum('balance') < 0 ? 'danger' : 'success' }}">
+                                        <i class="currency"></i>
+                                        {{ number_format($location->accounts->sum('balance'), 2) }}
+                                    </h6>
+                                </div>
                             </div>
                         </div>
                     </a>

@@ -22,6 +22,11 @@
             </div> --}}
         </div>
     </nav>
+    @if ($account_types->isEmpty())
+        <script>
+            window.location.reload();
+        </script>
+    @endif
     <div class="card shadow-1-soft">
         <div class="card-body">
             <h5 class="card-title text-capitalize mb-4">create bank account</h5>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AccountLocation;
 use App\Models\AccountStatus;
 use App\Models\AccountType;
+use App\Models\EntryType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,6 +25,26 @@ class AppController extends Controller
         $page_title = 'set up location for account';
         $account_types = AccountType::all(['id', 'type']);
         $account_statuses = AccountStatus::all(['id', 'status']);
+        if ($account_types->isEmpty()) {
+            AccountType::create([
+                'id' => 1,
+                'type' => 'savings'
+            ]);
+            AccountType::create([
+                'id' => 2,
+                'type' => 'current'
+            ]);
+        }
+        if ($account_statuses->isEmpty()) {
+            AccountStatus::create([
+                'id' => 1,
+                'status' => 'open'
+            ]);
+            AccountStatus::create([
+                'id' => 2,
+                'status' => 'closed'
+            ]);
+        }
         return view('locations.create', compact('page_title', 'account_types', 'account_statuses'));
     }
 
@@ -65,7 +86,7 @@ class AppController extends Controller
         $account_location = AccountLocation::create([
             'name' => $request->location,
         ]);
-        $account_location->accounts()->create([
+        $account = $account_location->accounts()->create([
             'account_number' => $request->account_number,
             'bank_name' => $request->bank_name,
             'name' => $this->getAcronym($request->bank_name),
@@ -76,6 +97,13 @@ class AppController extends Controller
             'initial_amount' => $request->initial_amount,
             'balance' => $request->initial_amount,
             'created_at' => $request->created_at ?? now(),
+        ]);
+        $account->entries()->create([
+            'entry_type_id' => EntryType::CREDIT_ID,
+            'amount' => $request->initial_amount ?? 0,
+            'description' => 'intial deposit',
+            'reference_number' => now()->format('Ymdhisv'),
+            'value_date' => $request->created_at ?? now(),
         ]);
         return redirect()->to(route('account.home', $account_location->id));
     }

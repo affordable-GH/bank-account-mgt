@@ -12,4 +12,5 @@ class AccountStatus extends Model
     public const CLOSED_ID = 2;
     public const OPEN = 'open';
     public const CLOSED = 'closed';
+    protected $fillable = ['status'];
 }

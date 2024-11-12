@@ -70,7 +70,9 @@
                                 <td>{{ $account->accountType->type }}</td>
                                 <td>{{ $account->accountStatus->status }}</td>
                                 <td>
-                                    <a role="button" href="#" title="GO TO ENTRIES"
+                                    <a role="button"
+                                        href="{{ route('account.show', [$account_location->id, $account->id]) }}"
+                                        title="GO TO ENTRIES"
                                         class="btn btn-secondary p-2">{{ $account->entries()->entriesToReconcile()->count() }}
                                     </a>
                                 </td>

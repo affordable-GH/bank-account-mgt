@@ -30,6 +30,11 @@
         }
     </style>
 </head>
+@if ($account_types->isEmpty())
+    <script>
+        window.location.reload();
+    </script>
+@endif
 
 <body class="container">
     <div class="card mt-5">
@@ -66,7 +71,8 @@
                     <label for="account_number" class="col-sm-2 col-form-label text-uppercase">account number</label>
                     <div class="col-sm-10">
                         <input required type="text" value="{{ @old('account_number') }}"
-                            class="form-control @error('account_number') is-invalid @enderror" id="account_number" name="account_number" />
+                            class="form-control @error('account_number') is-invalid @enderror" id="account_number"
+                            name="account_number" />
                         @error('account_number')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

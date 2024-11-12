@@ -29,6 +29,16 @@ class EntryController extends Controller
         $page_title = 'create account';
         $account_location = AccountLocation::findOrFail($location);
         $entry_types = EntryType::all();
+        if ($entry_types->isEmpty()){
+            EntryType::create([
+                'id'=>1,
+                'type' => 'credit',
+            ]);
+            EntryType::create([
+                'id'=>2,
+                'type' => 'debit',
+            ]);
+        }
         $accounts = $account_location->openAccounts()->orderBy('updated_at', 'desc')->get();
         return view('entries.create', compact('account_location', 'page_title', 'entry_types', 'accounts'));
     }

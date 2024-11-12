@@ -32,6 +32,17 @@ class TransferController extends Controller
         $page_title = 'create transfer';
         $account_location = AccountLocation::findOrFail($location);
         $accounts = Account::open()->orderBy('updated_at', 'desc')->get();
+        $transfer_types = TransferType::all();
+        if ($transfer_types->isEmpty()) {
+            TransferType::create([
+                'id' => 1,
+                'type' => 'internal',
+            ]);
+            TransferType::create([
+                'id' => 2,
+                'type' => 'external',
+            ]);
+        }
         return view('transfers.create', compact('account_location', 'page_title', 'accounts'));
     }
 
@@ -115,15 +126,15 @@ class TransferController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Transfer $transfer)
+    public function edit(int $location, Transfer $transfer)
     {
-        //
+        return $transfer;
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTransferRequest $request, Transfer $transfer)
+    public function update(int $location, UpdateTransferRequest $request, Transfer $transfer)
     {
         //
     }
@@ -131,7 +142,7 @@ class TransferController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Transfer $transfer)
+    public function destroy(int $location, Transfer $transfer)
     {
         //
     }

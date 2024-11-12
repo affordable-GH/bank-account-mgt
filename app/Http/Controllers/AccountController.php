@@ -56,7 +56,6 @@ class AccountController extends Controller
     public function store(int $location, StoreAccountRequest $request)
     {
         $account_location = AccountLocation::findOrFail($location);
-        dd($request->all());
         $account = $account_location->accounts()->create([
             'account_number' => $request->account_number,
             'bank_name' => $request->bank_name,
