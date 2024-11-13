@@ -27,7 +27,7 @@ class Transfer extends Model
     }
     public function scopeBelongsToAccounts($query, $accountIds)
     {
-        return $query->whereIn('to_account_id', $accountIds)->whereIn('from_account_id', $accountIds)->orderBy('created_at', 'desc')->get();
+        return $query->whereIn('to_account_id', $accountIds)->orWhereIn('from_account_id', $accountIds)->orderBy('created_at', 'desc')->get();
     }
     public function fromAccount()
     {

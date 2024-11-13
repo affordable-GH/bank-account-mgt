@@ -47,10 +47,10 @@
                         <tr class="border-bottom border-info">
                             <th>S/N</th>
                             <th scope="col">bank</th>
-                            <th scope="col">location</th>
                             <th scope="col">account number</th>
-                            <th scope="col">account type</th>
                             <th scope="col">account status</th>
+                            {{-- <th scope="col">location</th> --}}
+                            <th scope="col">account type</th>
                             <th scope="col" title="ENTRIES TO RECONCILE">ETR</th>
                             <th scope="col">balance(ghs)</th>
                             <th scope="col">date created</th>
@@ -65,10 +65,10 @@
                                     {{ $loop->iteration }}
                                 </td>
                                 <td>{{ $account->name }}</td>
-                                <td>{{ $account->accountLocation->name }}</td>
                                 <td>{{ $account->account_number }}</td>
-                                <td>{{ $account->accountType->type }}</td>
                                 <td>{{ $account->accountStatus->status }}</td>
+                                {{-- <td>{{ $account->accountLocation->name }}</td> --}}
+                                <td>{{ $account->accountType->type }}</td>
                                 <td>
                                     <a role="button"
                                         href="{{ route('account.show', [$account_location->id, $account->id]) }}"
@@ -77,7 +77,7 @@
                                     </a>
                                 </td>
                                 <td class="text-{{ $account->balance >= 0 ? 'success' : 'danger' }} fw-bold">
-                                    {{ number_format($account->balance, 2) }}
+                                    {{ number_format($account->balance, 2, '.', ',') }}
                                 </td>
                                 <td>{{ Carbon::parse($account->created_at)->format('Y-m-d') }}</td>
                                 <td>
@@ -158,13 +158,13 @@
                     [0, 'asc']
                 ],
                 columnDefs: [{
-                        targets: [6],
+                        targets: [8],
                         orderable: false
                     },
-                    {
-                        targets: [7],
-                        orderable: false
-                    }
+                    // {
+                    //     targets: [7],
+                    //     orderable: false
+                    // }
                 ],
                 // dom: '<"row"<"col-md-4"l><"col-md-4"B><"col-md-4"f>>rt<"row"<"col-md-4"i><"col-md-4"p><"col-md-4"n>>',
                 buttons: ['copy', 'excel', 'pdf', 'csv', 'print'],
@@ -178,7 +178,7 @@
                             return i;
                         }
                     };
-                    var total = api.column(5).data().reduce(function(a, b) {
+                    var total = api.column(6).data().reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0.00);
                     var formatter = new Intl.NumberFormat('en-US', {

@@ -25,26 +25,6 @@ class AppController extends Controller
         $page_title = 'set up location for account';
         $account_types = AccountType::all(['id', 'type']);
         $account_statuses = AccountStatus::all(['id', 'status']);
-        if ($account_types->isEmpty()) {
-            AccountType::create([
-                'id' => 1,
-                'type' => 'savings'
-            ]);
-            AccountType::create([
-                'id' => 2,
-                'type' => 'current'
-            ]);
-        }
-        if ($account_statuses->isEmpty()) {
-            AccountStatus::create([
-                'id' => 1,
-                'status' => 'open'
-            ]);
-            AccountStatus::create([
-                'id' => 2,
-                'status' => 'closed'
-            ]);
-        }
         return view('locations.create', compact('page_title', 'account_types', 'account_statuses'));
     }
 
@@ -95,7 +75,7 @@ class AppController extends Controller
             'account_description' => $request->account_description,
             'account_address' => $request->location . ' - ' . $this->getAcronym($request->bank_name),
             'initial_amount' => $request->initial_amount,
-            'balance' => $request->initial_amount,
+            'balance' => 0,
             'created_at' => $request->created_at ?? now(),
         ]);
         $account->entries()->create([

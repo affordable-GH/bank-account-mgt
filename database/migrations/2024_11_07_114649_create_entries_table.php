@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('entry_type_id')->constrained();
             $table->foreignId('account_id')->constrained();
+            $table->unsignedBigInteger('transfer_id')->nullable()->index('transfer_id');
+            $table->foreign('transfer_id')->references('id')->on('transfers');
             $table->date('value_date');
             $table->decimal('amount', 10, 2);
             $table->text('description')->nullable();

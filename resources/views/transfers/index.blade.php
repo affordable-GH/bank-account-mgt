@@ -47,9 +47,9 @@
                                 <td>
                                     {{ $loop->iteration }}
                                 </td>
-                                <td>{{ $transfer->fromAccount->name . ' (' . $transfer->fromAccount->accountLocation->name . ')' }}
+                                <td>{{ $transfer->fromAccount->name . ($transfer->fromAccount->accountLocation->id == $account_location->id ? '' : ' (' . $transfer->fromAccount->accountLocation->name . ')') }}
                                 </td>
-                                <td>{{ $transfer->toAccount->name . ' (' . $transfer->toAccount->accountLocation->name . ')' }}
+                                <td>{{ $transfer->toAccount->name . ($transfer->toAccount->accountLocation->id == $account_location->id ? '' : ' (' . $transfer->fromAccount->accountLocation->name . ')') }}
                                 </td>
                                 <td>
                                     <span class="btn btn-secondary">
@@ -65,10 +65,10 @@
                                 {{-- <td>{{ $transfer->reference_number }}</td> --}}
                                 <td>{{ Carbon::parse($transfer->created_at)->format('Y-m-d') }}</td>
                                 <td>
-                                    <a title="Edit" class="btn p-1 text-warning"
+                                    {{-- <a title="Edit" class="btn p-1 text-warning"
                                         href="{{ route('transfers.edit', [$account_location->id, $transfer->id]) }}">
                                         <i class="fas fa-eye"></i>
-                                    </a>
+                                    </a> --}}
                                     <button title="Delete" data-id="{{ $transfer->id }}"
                                         data-url="{{ route('transfers.destroy', [$account_location->id, $transfer->id]) }}"
                                         class="btn text-danger p-1 mx-1 delete-transfer" href="#">

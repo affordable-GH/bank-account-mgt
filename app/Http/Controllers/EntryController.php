@@ -17,29 +17,24 @@ class EntryController extends Controller
     public function index(int $location)
     {
         $account_location = AccountLocation::findOrFail($location);
-        $entries = Entry::belongsToAccounts($account_location->accounts->pluck('id'));
+        $entries = Entry::belongsToAccounts($account_location->accounts->pluck('id'))->orderBy('created_at', 'DESC')->get();
         return view('entries.index', compact('entries', 'account_location'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(int $location)
+
+    public function create(int $location, Request $request)
     {
         $page_title = 'create account';
         $account_location = AccountLocation::findOrFail($location);
         $entry_types = EntryType::all();
-        if ($entry_types->isEmpty()){
-            EntryType::create([
-                'id'=>1,
-                'type' => 'credit',
-            ]);
-            EntryType::create([
-                'id'=>2,
-                'type' => 'debit',
-            ]);
+        if ($request->filled('account')) {
+            $accounts = AccountLocation::findOrFail($location)->openAccounts()->where('id', $request->account)->get();
+        } else {
+            $accounts = $account_location->openAccounts()->orderBy('updated_at', 'desc')->get();
         }
-        $accounts = $account_location->openAccounts()->orderBy('updated_at', 'desc')->get();
         return view('entries.create', compact('account_location', 'page_title', 'entry_types', 'accounts'));
     }
 

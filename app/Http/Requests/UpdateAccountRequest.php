@@ -26,7 +26,7 @@ class UpdateAccountRequest extends FormRequest
             'bank_name' => 'required|string',
             // 'name' => 'required|string',
             // 'account_address' => 'required|string',
-            'initial_amount' => 'required|numeric|min:0',
+            // 'initial_amount' => 'required|numeric|min:0',
             'account_description' => 'nullable|string',
             'account_type' => 'required|exists:account_types,id',
             'account_status' => 'required|exists:account_statuses,id',

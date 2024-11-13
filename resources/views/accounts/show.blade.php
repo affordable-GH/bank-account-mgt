@@ -51,25 +51,30 @@
         <!-- Tabs content -->
         <div class="tab-content" id="ex2-content">
             <div class="tab-pane fade show active" id="ex3-tabs-1" role="tabpanel" aria-labelledby="ex3-tab-1">
-                <div class="d-flex justify-content-end">
-
-                </div>
-                <div class="d-flex align-items-center">
-                    <button id="excelButton" class="btn text-white me-1" data-mdb-ripple-init
-                        style="background-color: #438162;" title="Export table to excel" type="button">
-                        <i class="fas fa-print me-1"></i>
-                        Excel
-                    </button>
-                    <button id="pdfButton" class="btn text-white mx-1" data-mdb-ripple-init
-                        style="background-color: #ee4a60;" title="Save table as PDF" type="button">
-                        <i class="fas fa-file-pdf me-1"></i>
-                        PDF
-                    </button>
-                    <button id="printButton" class="btn text-white ms-1" data-mdb-ripple-init
-                        style="background-color: #44abff;" title="Click to print table" type="button">
-                        <i class="fas fa-print me-1"></i>
-                        print
-                    </button>
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="table-action-btns">
+                        <button id="excelButton" class="btn text-white me-1" data-mdb-ripple-init
+                            style="background-color: #438162;" title="Export table to excel" type="button">
+                            <i class="fas fa-print me-1"></i>
+                            Excel
+                        </button>
+                        <button id="pdfButton" class="btn text-white mx-1" data-mdb-ripple-init
+                            style="background-color: #ee4a60;" title="Save table as PDF" type="button">
+                            <i class="fas fa-file-pdf me-1"></i>
+                            PDF
+                        </button>
+                        <button id="printButton" class="btn text-white ms-1" data-mdb-ripple-init
+                            style="background-color: #1179ce;" title="Click to print table" type="button">
+                            <i class="fas fa-print me-1"></i>
+                            print
+                        </button>
+                    </div>
+                    @if ($account->accountStatus->status === 'open')
+                        <a role="button" class="btn btn-info"
+                            href="{{ route('entries.create', [$account_location->id, 'account' => $account->id]) }}">
+                            create entry
+                        </a>
+                    @endif
                 </div>
                 <div class="table-responsive">
                     <table class="table align-middle text-uppercase" id="table-account-entries">
@@ -106,11 +111,11 @@
                                     <td
                                         class="fw-bold text-{{ $entry->entryType->type === 'debit' ? 'danger' : 'success' }}">
                                         @if ($entry->entryType->type === 'credit')
-                                            {{ '+' . number_format($entry->amount, 2, '.', ',') }}
+                                            {{ '+' . $entry->is_transfer ? number_format($entry->amount, 2, '.', ',') : '' }}
                                         @endif
                                     </td>
                                     <td class="fw-bold">
-                                        {{ number_format($entry->account->balance, 2, '.', ',') }}
+                                        {{ $entry->is_reconciled ? number_format($entry->amount, 2, '.', ',') : 0 }}
                                     </td>
                                     <td>
                                         <div class="d-flex">
@@ -168,14 +173,14 @@
         const ACCOUNT_WITH_ENTRIES_TABLE = new DataTable('#table-account-entries', {
             // responsive: true,
             order: [
-                [0, 'asc']
+                [0, 'desc']
             ],
             columnDefs: [{
                     targets: [6],
                     orderable: false
                 },
                 {
-                    targets: [7],
+                    targets: [6],
                     orderable: false
                 }
             ],
@@ -232,7 +237,7 @@
                         "data-mdb-ripple-init": '',
                     },
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                        columns: [0, 1, 2, 3, 4, 5, 6]
                     }
                 },
                 {
@@ -242,7 +247,7 @@
                     orientation: 'portrait',
                     pageSize: 'A4',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6, 7],
+                        columns: [0, 1, 2, 3, 4, 5, 6],
                     },
                     text: '<i class="fas fa-print me-1"></i> pdf',
                     className: 'btn text-white ms-1',
@@ -259,7 +264,7 @@
                     title: '<span class="text-uppercase text-center"> {{ $account_location->name . ' - ' . $account->bank_name }} Entries </span>',
                     pageSize: 'A4',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6, 7],
+                        columns: [0, 1, 2, 3, 4, 5, 6],
                     },
                     orientation: 'portrait',
                     message: 'Printed on ' + new Date().toLocaleString(),

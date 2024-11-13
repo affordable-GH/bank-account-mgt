@@ -60,7 +60,7 @@
                             <th scope="col" title="REFERENCE NUMBER">ref. number</th>
                             <th scope="col">description</th>
                             <th scope="col">bank</th>
-                            <th scope="col">location</th>
+                            {{-- <th scope="col">location</th> --}}
                             <th scope="col">debit</th>
                             <th scope="col">credit</th>
                             <th scope="col" title="ACCOUNT BALANCE">balance</th>
@@ -81,8 +81,10 @@
                                 </td> --}}
                                 <td>{{ $entry->reference_number }}</td>
                                 <td>{{ $entry->description }}</td>
-                                <td class="text-uppercase">{{ $entry->account->name }}</td>
-                                <td>{{ $entry->account->accountLocation->name }}</td>
+                                <td class="text-uppercase">
+                                    {{ $entry->account->name }}
+                                </td>
+                                {{-- <td>{{ $entry->account->accountLocation->name }}</td> --}}
                                 {{-- <td>{{ $entry->account->accountType->type }}</td> --}}
                                 <td class="fw-bold text-{{ $entry->entryType->type === 'debit' ? 'danger' : 'success' }}">
                                     @if ($entry->entryType->type === 'debit')
@@ -95,31 +97,40 @@
                                     @endif
                                 </td>
                                 <td class="fw-bold">
-                                    {{ number_format($entry->account->balance, 2, '.', ',') }}
+                                    {{ $entry->is_reconciled ? number_format($entry->amount, 2, '.', ',') : 0.0 }}
                                 </td>
                                 <td class="text-nowrap">{{ Carbon::parse($entry->created_at)->format('d/m/Y') }}</td>
                                 <td class="text-nowrap">{{ Carbon::parse($entry->value_date)->format('d/m/Y') }}</td>
                                 <td>
                                     <div class="d-flex">
-                                        <a title="Edit" class="btn text-warning p-1 mx-1"
-                                            href="{{ route('entries.edit', [$account_location->id, $entry->id]) }}">
-                                            <i class="fas fa-pen-to-square"></i>
-                                        </a>
-                                        @if (!$entry->is_reconciled)
-                                            <button title="Delete" data-id="{{ $entry->id }}"
-                                                data-url="{{ route('entries.destroy', [$account_location->id, $entry->id]) }}"
-                                                class="btn text-danger p-1 mx-1 delete-entry" href="#">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
+                                        @if ($entry->is_transfer)
+                                            {{-- <a title="Edit" class="btn text-warning p-1 mx-1"
+                                                href="{{ route('transfers.edit', [$account_location->id, $entry->transfer->id]) }}">
+                                                <i class="fas fa-pen-to-square"></i>
+                                            </a> --}}
+                                        @else
+                                            <a title="Edit" class="btn text-warning p-1 mx-1"
+                                                href="{{ route('entries.edit', [$account_location->id, $entry->id]) }}">
+                                                <i class="fas fa-pen-to-square"></i>
+                                            </a>
+                                            @if (!$entry->is_reconciled)
+                                                <button title="Delete" data-id="{{ $entry->id }}"
+                                                    data-url="{{ route('entries.destroy', [$account_location->id, $entry->id]) }}"
+                                                    class="btn text-danger p-1 mx-1 delete-entry" href="#">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            @endif
                                         @endif
                                     </div>
                                 </td>
                                 <td class="m-0">
-                                    <div class="form-check-inline m-0">
-                                        <input class="form-check-input check-entry" autocomplete="off"
-                                            {{ $entry->is_reconciled ? 'disabled' : '' }}
-                                            value="{{ $entry->is_reconciled ? '' : $entry->id }}" type="checkbox" />
-                                    </div>
+                                    @if (!$entry->is_reconciled)
+                                        <div class="form-check-inline m-0">
+                                            <input class="form-check-input check-entry" autocomplete="off"
+                                                {{ $entry->is_reconciled ? 'disabled' : '' }}
+                                                value="{{ $entry->is_reconciled ? '' : $entry->id }}" type="checkbox" />
+                                        </div>
+                                    @endif
                                 </td>
                             </tr>
                         @empty
@@ -127,11 +138,11 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th colspan="4" class="text-start">Totals:</th>
+                            <th colspan="3" class="text-start">Totals:</th>
                             <th id="total-debit"></th>
                             <th id="total-credit"></th>
-                            <th id="total-balance"></th>
-                            <th colspan="3"></th>
+                            {{-- <th id="total-balance"></th> --}}
+                            <th colspan="4"></th>
                         </tr>
                     </tfoot>
                 </table>
@@ -245,14 +256,14 @@
             const ACCOUNTS_TABLE = new DataTable('#table-entries', {
                 // responsive: true,
                 order: [
-                    [0, 'asc']
+                    [0, 'desc']
                 ],
                 columnDefs: [{
-                        targets: [6],
+                        targets: [9],
                         orderable: false
                     },
                     {
-                        targets: [7],
+                        targets: [8],
                         orderable: false
                     }
                 ],
@@ -275,26 +286,26 @@
                         style: 'currency',
                         currency: 'GHS',
                     });
-                    var debitTotal = api.column(4, {
+                    var debitTotal = api.column(3, {
                         page: 'current'
                     }).data().reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0.00);
-                    var creditTotal = api.column(5, {
+                    var creditTotal = api.column(4, {
                         page: 'current'
                     }).data().reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0.00);
-                    var balanceTotal = api.column(6, {
+                    var balanceTotal = api.column(5, {
                         page: 'current'
                     }).data().reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0.00);
-                    $(api.column(4).footer()).addClass('text-danger fw-semibold d-inline-block').html(
+                    $(api.column(3).footer()).addClass('text-danger fw-semibold d-inline-block').html(
                         formatter.format(debitTotal));
-                    $(api.column(5).footer()).addClass('text-success fw-semibold').html(formatter
+                    $(api.column(4).footer()).addClass('text-success fw-semibold').html(formatter
                         .format(creditTotal));
-                    $(api.column(6).footer()).addClass('fw-semibold').html(formatter.format(
+                    $(api.column(5).footer()).addClass('fw-semibold').html(formatter.format(
                         balanceTotal));
                 },
                 buttons: [{
@@ -309,7 +320,7 @@
                             "data-mdb-ripple-init": '',
                         },
                         exportOptions: {
-                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7]
                         }
                     },
                     {
@@ -319,7 +330,7 @@
                         orientation: 'portrait',
                         pageSize: 'A4',
                         exportOptions: {
-                            columns: [1, 2, 3, 4, 5, 6, 7, 8],
+                            columns: [1, 2, 3, 4, 5, 6, 7],
                         },
                         text: '<i class="fas fa-print me-1"></i> pdf',
                         className: 'btn text-white ms-1',
@@ -336,7 +347,7 @@
                         title: '<span class="text-uppercase text-center"> {{ $account_location->name }} Entries </span>',
                         pageSize: 'A4',
                         exportOptions: {
-                            columns: [1, 2, 3, 4, 5, 6, 7, 8],
+                            columns: [1, 2, 3, 4, 5, 6, 7],
                         },
                         orientation: 'portrait',
                         message: 'Printed on ' + new Date().toLocaleString(),

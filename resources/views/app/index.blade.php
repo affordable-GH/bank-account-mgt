@@ -35,9 +35,15 @@
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title fw-bold text-start text-uppercase">
-                                    {{ $location->name }}</h4>
-                                <p class="card-start mb-0 pb-0 fw-semibold">Accounts Balances
-                                    {{ ' (' . $location->accounts->count() . ')' }}</p>
+                                    {{ $location->name }}
+                                </h4>
+                                {{-- <div class="d-flex justify-content-evenly align-items-center">
+                                    <i class="fa-solid fa-money-check fa-2x"></i> --}}
+                                    <div class="text-start fs-3">
+                                        {{ $location->accounts->count() }}
+                                    </div>
+                                {{-- </div> --}}
+                                <p class="card-start mb-0 pb-0 fw-semibold">Accounts Balances</p>
                                 <div class="d-flex justify-content-between">
                                     <h6
                                         class="mb-0 fs-5 text-nowrap text-{{ $location->accounts->sum('balance') < 0 ? 'danger' : 'success' }}">

@@ -11,7 +11,7 @@ class UpdateTransferRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,18 @@ class UpdateTransferRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'to_account' => 'required|exists:accounts,id|different:from_account',
+            'from_account' => 'required|exists:accounts,id|different:to_account',
+            'amount' => 'required|numeric|min:1',
+            'notes' => 'required|string',
+        ];
+    }
+    public function messages(): array
+    {
+        return  [
+            'notes.required' => 'Description field is required',
+            'to_account.different' => 'FROM ACCOUNT and TO ACCOUNT must not be the same',
+            'from_account.different' => 'TO ACCOUNT and FROM ACCOUNT must not be the same'
         ];
     }
 }
