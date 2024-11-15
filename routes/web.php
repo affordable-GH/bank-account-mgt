@@ -25,7 +25,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('entries', EntryController::class);
         Route::delete('delete-entries', [EntryController::class, 'destroy'])->name('entries.delete');
         Route::resource('transfers', TransferController::class);
-        Route::post('entries.reconcile', [EntryController::class, 'reconcile'])->name('entries.reconcile');
+        Route::post('entries/reconcile', [EntryController::class, 'reconcile'])->name('entries.reconcile');
     });
     Route::post('l/{location}/clone', [AccountController::class, 'cloneAccounts'])->name('l.clone');
     Route::post('logout', function (Request $request) {

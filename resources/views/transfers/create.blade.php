@@ -49,7 +49,7 @@
                         <select required class="form-select select2 @error('from_account') is-invalid @enderror"
                             name="from_account" id="from_account">
                             @forelse ($accounts as $account)
-                                <option value="{{ $account->id }}">{{ $account->name }}</option>
+                                <option value="{{ $account->id }}">{{ $account->account_address }}</option>
                             @empty
                             @endforelse
                         </select>
@@ -61,7 +61,7 @@
                         <select required class="form-select select2 @error('to_account') is-invalid @enderror"
                             name="to_account" id="to_account">
                             @forelse ($accounts as $account)
-                                <option value="{{ $account->id }}">{{ $account->name }}</option>
+                                <option value="{{ $account->id }}">{{ $account->account_address }}</option>
                             @empty
                             @endforelse
                         </select>

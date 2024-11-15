@@ -56,9 +56,9 @@ class Account extends Model
     }
     public function updateBalance(int|float $amount, string $type)
     {
-        if ($type == 'debit') {
+        if ($type === 'debit') {
             $this->balance -= $amount;
-        } elseif ($type == 'credit') {
+        } elseif ($type === 'credit') {
             $this->balance += $amount;
         }
         $this->save();

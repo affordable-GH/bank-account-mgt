@@ -52,7 +52,7 @@
                             {{-- <th scope="col">location</th> --}}
                             <th scope="col">account type</th>
                             <th scope="col" title="ENTRIES TO RECONCILE">ETR</th>
-                            <th scope="col">balance(ghs)</th>
+                            <th scope="col">balances(ghs)</th>
                             <th scope="col">date created</th>
                             <th scope="col">operations</th>
                         </tr>
@@ -64,16 +64,16 @@
                                 <td>
                                     {{ $loop->iteration }}
                                 </td>
-                                <td>{{ $account->name }}</td>
+                                <td>{{ $account->account_address }}</td>
                                 <td>{{ $account->account_number }}</td>
                                 <td>{{ $account->accountStatus->status }}</td>
                                 {{-- <td>{{ $account->accountLocation->name }}</td> --}}
                                 <td>{{ $account->accountType->type }}</td>
                                 <td>
                                     <a role="button"
-                                        href="{{ route('account.show', [$account_location->id, $account->id]) }}"
+                                        href="{{ $account->entries()->entriesToReconcile()->count() > 0 ? route('account.show', [$account_location->id, $account->id]) : '#' }}"
                                         title="GO TO ENTRIES"
-                                        class="btn btn-secondary p-2">{{ $account->entries()->entriesToReconcile()->count() }}
+                                        class="btn btn-secondary p-2 {{ $account->entries()->entriesToReconcile()->count() > 0 ? '' : 'disabled' }}">{{ $account->entries()->entriesToReconcile()->count() }}
                                     </a>
                                 </td>
                                 <td class="text-{{ $account->balance >= 0 ? 'success' : 'danger' }} fw-bold">
@@ -190,7 +190,7 @@
                     }).data().reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0.00);
-                    $(api.column(6).footer()).html(formatter.format(pageTotal));
+                    $(api.column(6).footer()).addClass('fw-semibold').html(formatter.format(pageTotal));
                 },
                 buttons: [{
                         extend: 'excel',

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Entry;
 use App\Http\Requests\StoreEntryRequest;
 use App\Http\Requests\UpdateEntryRequest;
+use App\Models\Account;
 use App\Models\AccountLocation;
 use App\Models\EntryType;
 use Illuminate\Http\Request;
@@ -14,10 +15,15 @@ class EntryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(int $location)
+    public function index(int $location, Request $request)
     {
         $account_location = AccountLocation::findOrFail($location);
-        $entries = Entry::belongsToAccounts($account_location->accounts->pluck('id'))->orderBy('created_at', 'DESC')->get();
+        if ($request->filled('account')) {
+            $account = Account::findOrFail($request->account);
+            $entries = $account_location->accounts->entries->orderBy('created_at', 'DESC')->get();
+        } else {
+            $entries = Entry::belongsToAccounts($account_location->accounts->pluck('id'))->orderBy('created_at', 'DESC')->get();
+        }
         return view('entries.index', compact('entries', 'account_location'));
     }
 
@@ -156,19 +162,18 @@ class EntryController extends Controller
         // Reconcile entries
         $entry_ids = $request->input('entries');
         Entry::whereIn('id', $entry_ids)
-            ->whereHas('account', function ($query) use ($location) {
-                $query->whereHas('accountLocation', function ($query) use ($location) {
-                    $query->where('id', $location);
-                });
+            ->whereHas('account.accountLocation', function ($query) use ($location) {
+                $query->where('id', $location);
             })->get()->each(function ($entry) {
-                // dd($entry->amount, $entry->entryType->type, $entry->account);
                 $entry->account->updateBalance($entry->amount, $entry->entryType->type);
+                if ($entry->is_transfer) {
+                    $transferEntries = Entry::where('transfer_id', $entry->transfer->id)->pluck('id')->toArray();
+                    $entry->reconcile($transferEntries);
+                }
                 $entry->update(['is_reconciled' => true]);
             });
-
-
         // Return success response
-        $url = redirect()->back()->with('success', 'Entries reconciled successfully.')->getTargetUrl();
+        $url = redirect()->back()->with('success', 'Entries reconciled successfully')->getTargetUrl();
         return response()->json(['success' => true, 'url' => $url]);
     }
 }

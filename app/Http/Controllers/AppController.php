@@ -81,7 +81,7 @@ class AppController extends Controller
         $account->entries()->create([
             'entry_type_id' => EntryType::CREDIT_ID,
             'amount' => $request->initial_amount ?? 0,
-            'description' => 'intial deposit',
+            'description' => 'initial deposit',
             'reference_number' => now()->format('Ymdhisv'),
             'value_date' => $request->created_at ?? now(),
         ]);
@@ -98,29 +98,6 @@ class AppController extends Controller
         $route = redirect()->route('account.home', $location->id)->getTargetUrl();
         return response()->json(['success' => true, 'url' => $route]);
     }
-    // public function store(int $account_location, Request $request)
-    // {
-    //     dd($request);
-    //     $request->validate([
-    //         'ref' => 'required|string|max:255',
-    //         'location' => 'required|unique:account_locations,name',
-    //         'name' => 'required|string|max:255',
-    //         'bank_name' => 'required|string|max:255',
-    //         'account_type' => 'required|exists:account_types,id',
-    //         'account_status' => 'required|exists:account_statuses,id',
-    //         'account_description' => 'nullable|string|max:255',
-    //         'account_address' => 'required|string|max:255',
-    //         'initial_amount' => 'nullable|numeric',
-    //         'created_at' => 'date'
-    //     ], [
-    //         'location.unique' => 'Location already exists.',
-    //         'location.required' => 'Account location is required.',
-    //         'bank_name.required' => 'Bank name is required.',
-    //         'name.required' => 'Account name is required.',
-    //         'account_description.max' => 'Account description cannot be more than 255 characters.',
-    //         'created_at.date' => 'account creation date should be a valid date.',
-    //     ]);
-    // }
     public function update(int $id, Request $request)
     {
         $request->validate(

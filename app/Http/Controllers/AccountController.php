@@ -168,6 +168,8 @@ class AccountController extends Controller
             $clonedAccount = $account->replicate();
             $clonedAccount->account_location_id = $clonedAccountLocation->id;
             $clonedAccount->account_number = $this->generateAccountNumber();
+            $clonedAccount->account_address = $account->name . ' - ' . $accountLocation->name . 'Cloned';
+            $clonedAccount->balance = 0;
             $clonedAccount->save();
         }
 

@@ -8,7 +8,7 @@ use Illuminate\Database\Seeder;
 
 class AccountTypeSeeder extends Seeder
 {
-    const TYPES = ['current', 'savings', ''];
+    const TYPES = ['current', 'savings'];
     /**
      * Run the database seeds.
      */

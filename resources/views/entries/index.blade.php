@@ -63,7 +63,7 @@
                             {{-- <th scope="col">location</th> --}}
                             <th scope="col">debit</th>
                             <th scope="col">credit</th>
-                            <th scope="col" title="ACCOUNT BALANCE">balance</th>
+                            <th scope="col" title="ACCOUNT BALANCE">balances</th>
                             <th scope="col" title="PAYMENT DATE">pay. date</th>
                             <th scope="col" title="VALUE DATE">v. date</th>
                             <th scope="col">actions</th>
@@ -93,11 +93,19 @@
                                 </td>
                                 <td class="fw-bold text-{{ $entry->entryType->type === 'debit' ? 'danger' : 'success' }}">
                                     @if ($entry->entryType->type === 'credit')
-                                        {{ '+' . number_format($entry->amount, 2, '.', ',') }}
+                                        {{ number_format($entry->amount, 2, '.', ',') }}
                                     @endif
                                 </td>
                                 <td class="fw-bold">
-                                    {{ $entry->is_reconciled ? number_format($entry->amount, 2, '.', ',') : 0.0 }}
+                                    @if ($entry->is_reconciled)
+                                        @if ($entry->entryType->type === 'debit')
+                                            {{ '-' . number_format($entry->amount, 2, '.', ',') }}
+                                        @else
+                                            {{ number_format($entry->amount, 2, '.', ',') }}
+                                        @endif
+                                    @else
+                                        {{ number_format($entry->amount, 2, '.', ',') }}
+                                    @endif
                                 </td>
                                 <td class="text-nowrap">{{ Carbon::parse($entry->created_at)->format('d/m/Y') }}</td>
                                 <td class="text-nowrap">{{ Carbon::parse($entry->value_date)->format('d/m/Y') }}</td>
@@ -156,6 +164,7 @@
         //     console.log(ids);
         // });
         $(document).ready(function() {
+
             $('button.delete-entry').click(function(e) {
                 e.preventDefault();
                 var id = $(this).data('id'),
@@ -255,9 +264,10 @@
             });
             const ACCOUNTS_TABLE = new DataTable('#table-entries', {
                 // responsive: true,
-                order: [
-                    [0, 'desc']
-                ],
+                // order: [
+                //     [0, 'desc']
+                // ],
+
                 columnDefs: [{
                         targets: [9],
                         orderable: false
@@ -296,11 +306,12 @@
                     }).data().reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0.00);
-                    var balanceTotal = api.column(5, {
-                        page: 'current'
-                    }).data().reduce(function(a, b) {
-                        return intVal(a) + intVal(b);
-                    }, 0.00);
+                    var balanceTotal = creditTotal - debitTotal;
+                    // = api.column(5, {
+                    //     page: 'current'
+                    // }).data().reduce(function(a, b) {
+                    //     return intVal(a) + intVal(b);
+                    // }, 0.00);
                     $(api.column(3).footer()).addClass('text-danger fw-semibold d-inline-block').html(
                         formatter.format(debitTotal));
                     $(api.column(4).footer()).addClass('text-success fw-semibold').html(formatter
@@ -330,7 +341,7 @@
                         orientation: 'portrait',
                         pageSize: 'A4',
                         exportOptions: {
-                            columns: [1, 2, 3, 4, 5, 6, 7],
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7],
                         },
                         text: '<i class="fas fa-print me-1"></i> pdf',
                         className: 'btn text-white ms-1',
@@ -347,7 +358,7 @@
                         title: '<span class="text-uppercase text-center"> {{ $account_location->name }} Entries </span>',
                         pageSize: 'A4',
                         exportOptions: {
-                            columns: [1, 2, 3, 4, 5, 6, 7],
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7],
                         },
                         orientation: 'portrait',
                         message: 'Printed on ' + new Date().toLocaleString(),

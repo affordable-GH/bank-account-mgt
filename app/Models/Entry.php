@@ -26,7 +26,8 @@ class Entry extends Model
 
     protected $casts = [
         'value_date' => 'date',
-        'is_reconciled' => 'boolean'  // Assuming the column is of boolean type in the database table
+        'is_reconciled' => 'boolean', // Assuming the column is of boolean type in the database table
+        'is_transfer' => 'boolean' // Assuming the column is of boolean type in the database table
     ];
     public function account()
     {
@@ -51,5 +52,12 @@ class Entry extends Model
     public function transfer()
     {
         return $this->belongsTo(Transfer::class);  // Assuming Transfer Model has a foreign key 'transfer_id'
+    }
+    public function reconcile(int|array $id)
+    {
+        if (is_array($id)) {
+            return $this->whereIn('id', $id)->update(['is_reconciled' => true]);
+        }
+        return $this->where('id', $id)->update(['is_reconciled' => true]);
     }
 }
