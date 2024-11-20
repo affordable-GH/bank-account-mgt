@@ -30,7 +30,7 @@
         <div class="row">
             <h6 class="text-center fw-bold text-uppercase">Accounts locations & balances</h6>
             @forelse ($account_locations as $location)
-                <div class="col-md-4 gy-2" style="min-width: 280px;">
+                <div class="col-md-4 gy-2" style="min-width: 320px;">
                     <a href="{{ route('account.home', $location->id) }}">
                         <div class="card">
                             <div class="card-body">
@@ -43,7 +43,7 @@
                                         {{ $location->accounts->count() }}
                                     </div>
                                 {{-- </div> --}}
-                                <p class="card-start mb-0 pb-0 fw-semibold">Accounts Balances</p>
+                                <p class="card-start mb-0 pb-0 fw-semibold">Accounts Balance</p>
                                 <div class="d-flex justify-content-between">
                                     <h6
                                         class="mb-0 fs-5 text-nowrap text-{{ $location->accounts->sum('balance') < 0 ? 'danger' : 'success' }}">

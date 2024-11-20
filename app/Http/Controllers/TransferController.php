@@ -40,7 +40,7 @@ class TransferController extends Controller
     {
         return (int) now()->format('Ymdhisv');
     }
-    private function createEntry(int $account_id, int $transferId, int $entryType, float $amount, $date, string $description)
+    private function createEntry(int $account_id, int $transferId, int $entryType, float $amount, $date, $value_date, string $description)
     {
         Account::find($account_id)->entries()->create([
             'entry_type_id' => $entryType,
@@ -50,7 +50,8 @@ class TransferController extends Controller
             'value_date' => $date ?? now(),
             'is_transfer' => true,
             'transfer_id' => $transferId,
-            'created_at' => $date ?? now(),
+            'date' => $date ?? now(),
+            'value_date' => $value_date ?? now(),
         ]);
     }
     private function updateEntry(int $account_id, int $entryType, float $amount, $date, string $description)
@@ -84,13 +85,14 @@ class TransferController extends Controller
         $to_account_id = $to_account->id;
         $notes = $request->notes;
         $date = $request->date;
+        $value_date = $request->input('value-date');
         // Validate balance before transfer
         if ($from_account->balance < $amount) {
             return back()->with('error', 'Insufficient Account Balance');
         }
         // dd($request->all(), $from_account, $to_account, $transfer_type);
 
-        DB::transaction(function () use ($from_account_id, $to_account_id, $amount, $transfer_type, $notes, $date, $request, $to_account, $from_account) {
+        DB::transaction(function () use ($from_account_id, $to_account_id, $amount, $transfer_type, $notes, $date, $request, $to_account, $from_account, $value_date) {
             // Update sender's balance
             // $fromAccount = Account::find($from_account_id);
             // $fromAccount->balance -= $amount;
@@ -110,8 +112,8 @@ class TransferController extends Controller
                 'transfer_type_id' => $transfer_type,
                 'transfer_date' => $date ?? now(),
             ]);
-            $this->createEntry($from_account_id, $transfer->id, EntryType::DEBIT_ID, $request->amount, $request->date, 'Transfer to ' . $to_account->name);
-            $this->createEntry($to_account_id, $transfer->id, EntryType::CREDIT_ID, $request->amount, $request->date, 'Transfer from ' . $from_account->name);
+            $this->createEntry($from_account_id, $transfer->id, EntryType::DEBIT_ID, $request->amount, $request->date, $value_date, 'Transfer to ' . $to_account->name);
+            $this->createEntry($to_account_id, $transfer->id, EntryType::CREDIT_ID, $request->amount, $request->date, $value_date, 'Transfer from ' . $from_account->name);
         });
         $route = $request->has('exit') ? 'transfers.index' : 'transfers.create';
         return redirect()->to(route($route, ['location' => $location]))->with('success', 'Transfer created successfully');
@@ -299,11 +301,10 @@ class TransferController extends Controller
                 'transfer_type_id' => $transfer_type,
                 'transfer_date' => $date ?? now(),
             ]);
-            $this->createEntry($from_account_id, $transfer->id, EntryType::DEBIT_ID, $request->amount, $request->date, 'Transfer to ' . $to_account->name);
-            $this->createEntry($to_account_id, $transfer->id, EntryType::CREDIT_ID, $request->amount, $request->date, 'Transfer from ' . $from_account->name);
+            // $this->createEntry($from_account_id, $transfer->id, EntryType::DEBIT_ID, $request->amount, $request->date, 'Transfer to ' . $to_account->name);
+            // $this->createEntry($to_account_id, $transfer->id, EntryType::CREDIT_ID, $request->amount, $request->date, 'Transfer from ' . $from_account->name);
         });
         $route = $request->has('exit') ? 'transfers.index' : 'transfers.create';
         return redirect()->to(route($route, ['location' => $location]))->with('success', 'Transfer created successfully');
-  
     }
 }

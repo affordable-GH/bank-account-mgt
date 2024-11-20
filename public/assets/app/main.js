@@ -19,7 +19,7 @@ function onDOMContentLoaded() {
         });
     }, 1000);
 
-    const SIDEBAR = select('aside.sidebar');
+    const SIDEBAR = select('.sidebar');
     const nav_heigth = select('header ul');
     const SIDEBAR_TOGGLE = select('.sidebar-toggle');
     select('.main').style.top = nav_heigth.offsetHeight + 'px';
@@ -39,5 +39,5 @@ function onDOMContentLoaded() {
     $('.select2').select2({
         width: '100%',
         placeholder: '',
-    });
+    });    
 }

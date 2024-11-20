@@ -7,7 +7,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item text-uppercase">
-                        <a href="#">{{ env('APP_NAME') }}</a>
+                        <a href="#">{{ $account_location->name }}</a>
                     </li>
                     <li class="breadcrumb-item text-uppercase">
                         <a href="#">bank list</a>
@@ -30,11 +30,11 @@
                     <i class="fas fa-print me-1"></i>
                     Excel
                 </button>
-                <button id="pdfButton" class="btn text-white mx-1" data-mdb-ripple-init style="background-color: #ee4a60;"
+                {{-- <button id="pdfButton" class="btn text-white mx-1" data-mdb-ripple-init style="background-color: #ee4a60;"
                     title="Save table as PDF" type="button">
                     <i class="fas fa-file-pdf me-1"></i>
                     PDF
-                </button>
+                </button> --}}
                 <button id="printButton" class="btn text-white ms-1" data-mdb-ripple-init style="background-color: #44abff;"
                     title="Click to print table" type="button">
                     <i class="fas fa-print me-1"></i>
@@ -52,7 +52,7 @@
                             {{-- <th scope="col">location</th> --}}
                             <th scope="col">account type</th>
                             <th scope="col" title="ENTRIES TO RECONCILE">ETR</th>
-                            <th scope="col">balances(ghs)</th>
+                            <th scope="col">balance</th>
                             <th scope="col">date created</th>
                             <th scope="col">operations</th>
                         </tr>
@@ -115,9 +115,6 @@
 @section('script')
     <script>
         $(document).ready(function() {
-            console.log($('button.clone-btn'));
-
-
             $('button.delete-account').click(function() {
                 const id = $(this).data('id');
                 const url = $(this).data('url');

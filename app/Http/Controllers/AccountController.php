@@ -37,14 +37,27 @@ class AccountController extends Controller
     }
     private function getAcronym($str)
     {
+        // $words = explode(' ', trim($str));
+        // $acronym = '';
+        // foreach ($words as $word) {
+        //     if (strlen($word) > 3) {
+        //         $acronym .= strtoupper($word[0]);
+        //     }
+        // }
+        // return $acronym;
         $words = explode(' ', trim($str));
-        $acronym = '';
-        foreach ($words as $word) {
-            if (strlen($word) > 3) {
-                $acronym .= strtoupper($word[0]);
+
+        if (count($words) == 1) {
+            return strtoupper($str);
+        } else {
+            $acronym = '';
+            foreach ($words as $word) {
+                if (strlen($word) > 3) {
+                    $acronym .= strtoupper($word[0]);
+                }
             }
+            return $acronym;
         }
-        return $acronym;
     }
 
 
@@ -168,7 +181,7 @@ class AccountController extends Controller
             $clonedAccount = $account->replicate();
             $clonedAccount->account_location_id = $clonedAccountLocation->id;
             $clonedAccount->account_number = $this->generateAccountNumber();
-            $clonedAccount->account_address = $account->name . ' - ' . $accountLocation->name . 'Cloned';
+            $clonedAccount->account_address = $account->name;
             $clonedAccount->balance = 0;
             $clonedAccount->save();
         }

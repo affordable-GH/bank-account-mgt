@@ -7,7 +7,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item text-uppercase">
-                        <a href="#">{{ env('APP_NAME') }}</a>
+                        <a href="#">{{ $account_location->name }}</a>
                     </li>
                     <li class="breadcrumb-item text-uppercase">
                         <a href="#">accounts</a>
@@ -30,11 +30,11 @@
                     <i class="fas fa-print me-1"></i>
                     Excel
                 </button>
-                <button id="pdfButton" class="btn text-white mx-1" data-mdb-ripple-init style="background-color: #ee4a60;"
+                {{-- <button id="pdfButton" class="btn text-white mx-1" data-mdb-ripple-init style="background-color: #ee4a60;"
                     title="Save table as PDF" type="button">
                     <i class="fas fa-file-pdf me-1"></i>
                     PDF
-                </button>
+                </button> --}}
                 <button id="printButton" class="btn text-white ms-1" data-mdb-ripple-init style="background-color: #44abff;"
                     title="Click to print table" type="button">
                     <i class="fas fa-print me-1"></i>

@@ -7,7 +7,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item text-uppercase">
-                        <a href="#">{{ env('APP_NAME') }}</a>
+                        <a href="#">{{ $account_location->name }}</a>
                     </li>
                     <li class="breadcrumb-item text-uppercase">
                         <a href="#">accounts</a>
@@ -41,11 +41,11 @@
                     <i class="fas fa-print me-1"></i>
                     Excel
                 </button>
-                <button id="pdfButton" class="btn text-white mx-1" data-mdb-ripple-init style="background-color: #ee4a60;"
+                {{-- <button id="pdfButton" class="btn text-white mx-1" data-mdb-ripple-init style="background-color: #ee4a60;"
                     title="Save table as PDF" type="button">
                     <i class="fas fa-file-pdf me-1"></i>
                     PDF
-                </button>
+                </button> --}}
                 <button id="printButton" class="btn text-white ms-1" data-mdb-ripple-init style="background-color: #44abff;"
                     title="Click to print table" type="button">
                     <i class="fas fa-print me-1"></i>
@@ -63,11 +63,15 @@
                             {{-- <th scope="col">location</th> --}}
                             <th scope="col">debit</th>
                             <th scope="col">credit</th>
-                            <th scope="col" title="ACCOUNT BALANCE">balances</th>
+                            <th scope="col" title="ACCOUNT BALANCE">balance</th>
                             <th scope="col" title="PAYMENT DATE">pay. date</th>
-                            <th scope="col" title="VALUE DATE">v. date</th>
+                            <th scope="col" title="VALUE DATE">value date</th>
                             <th scope="col">actions</th>
                             <th>
+                                <div class="form-check">
+                                    <input class="form-check-input" name="check-all" id="check-all" title="Select all"
+                                        type="checkbox" />
+                                </div>
 
                             </th>
                         </tr>
@@ -107,7 +111,7 @@
                                         {{ number_format($entry->amount, 2, '.', ',') }}
                                     @endif
                                 </td>
-                                <td class="text-nowrap">{{ Carbon::parse($entry->created_at)->format('d/m/Y') }}</td>
+                                <td class="text-nowrap">{{ Carbon::parse($entry->date)->format('d/m/Y') }}</td>
                                 <td class="text-nowrap">{{ Carbon::parse($entry->value_date)->format('d/m/Y') }}</td>
                                 <td>
                                     <div class="d-flex">
@@ -146,7 +150,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th colspan="3" class="text-start">Totals:</th>
+                            <th colspan="3" class="text-start">Total:</th>
                             <th id="total-debit"></th>
                             <th id="total-credit"></th>
                             {{-- <th id="total-balance"></th> --}}
@@ -157,12 +161,7 @@
             </div>
         </div>
     </div>
-    <script>
-        // var ids = [];
-        // $('input[type="checkbox"].check-entry').on('change', function(e) {
-        //     e.currentTarget.checked ? ids.push($(this).val()) : ids.pop($(this).val());
-        //     console.log(ids);
-        // });
+    <script>;
         $(document).ready(function() {
 
             $('button.delete-entry').click(function(e) {
@@ -201,14 +200,35 @@
                     reconcileButton.attr('disabled', 'disabled');
                     deleteButton.attr('disabled', 'disabled');
                 }
-                // if (checkboxes.length > 1) {
-                //     deleteButton.removeAttr('disabled');
-                // } else {
-                //     deleteButton.attr('disabled', 'disabled');
-                // }
             }
             var entries = []; // Declare array outside function scope
-            // Listen for checkbox changes
+            $('input[name="check-all"]').change(function() {
+                const checkAll = $(this).is(':checked');
+                $('table#table-entries input[type="checkbox"].check-entry').each(function() {
+                    $(this).prop('checked', checkAll);
+                    if (checkAll) {
+                        entries.push($(this).val());
+                    }
+                });
+                if (!checkAll) {
+                    entries = [];
+                }
+                updateButtonState();
+            });
+            $('table#table-entries input[type="checkbox"].check-entry').change(function() {
+                const checkboxId = $(this).val();
+                const isChecked = $(this).is(':checked');
+
+                if (isChecked) {
+                    entries.push(checkboxId);
+                } else {
+                    entries = entries.filter(id => id !== checkboxId);
+                    if (entries.length == 0) {
+                        $('input[name="check-all"]').prop('checked', false);
+                    }
+                }
+                updateButtonState();
+            });
             $('table#table-entries input[type="checkbox"].check-entry').change(function() {
                 const checkboxId = $(this).val();
                 const isChecked = $(this).is(':checked');

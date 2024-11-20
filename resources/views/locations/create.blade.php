@@ -126,9 +126,9 @@
                     <label for="initial_amount" class="col-form-label text-uppercase col-sm-2 pt-0">initial
                         amount</label>
                     <div class="col-sm-10">
-                        <input required type="initial_amount"
-                            class="form-control @error('initial_amount') is-invalid @enderror" id="initial_amount"
-                            name="initial_amount" />
+                        <input required type="text"
+                            class="currencyInput form-control @error('initial_amount') is-invalid @enderror"
+                            id="initial_amount" name="initial_amount" />
                         @error('initial_amount')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

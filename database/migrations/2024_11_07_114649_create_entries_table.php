@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('transfer_id')->nullable()->index('transfer_id');
             $table->foreign('transfer_id')->references('id')->on('transfers')->cascadeOnDelete();
             $table->date('value_date');
+            $table->date('date');
             $table->decimal('amount', 10, 2);
             $table->text('description')->nullable();
             $table->boolean('is_reconciled')->default(false);

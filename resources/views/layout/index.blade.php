@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{ asset('assets/jquery/jquery-ui.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/app/loader.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/font-awesome/css/all.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/boxicons/boxicons.min.css') }}" />
@@ -18,6 +19,7 @@
     <link rel="stylesheet" href="{{ asset('assets/app/main.css') }}" />
     <link rel="stylesheet" href="">
     <script src="{{ asset('assets/jquery/external/jquery.js') }}"></script>
+    <script src="{{ asset('assets/jquery/jquery.inputmask.min.js') }}"></script>
     <title>ACCOUNTS MANAGER | {{ strtoupper($page_title ?? 'HOME') }}</title>
 </head>
 <style>
@@ -85,7 +87,7 @@
         bottom: 0;
         width: 100%;
         width: 320px;
-        height: 100vh;
+        height: 100%;
         z-index: 1090;
         transition: all 0.3s ease-in-out;
         /* transform: translateX(-200px); */
@@ -120,6 +122,56 @@
         color: #fff;
 
         background-color: #299D91;
+    }
+
+    .main {
+        padding: 12px;
+        margin-left: 320px;
+    }
+
+    @media (max-width: 768px) {
+
+        .sidebar {
+            left: -320px;
+        }
+
+        .sidebar.show {
+            left: 0;
+            z-index: 1090;
+        }
+
+        .main {
+            margin-left: 0 !important;
+        }
+
+        .nav-toggler-button {
+            display: inline-flex !important;
+        }
+    }
+
+    .nav-toggler-button {
+        display: none;
+    }
+
+    .backdrop {
+        position: fixed;
+        display: none;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        /* z-index: 999; */
+        opacity: 1;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .backdrop.show {
+        opacity: 1;
+        transition: opacity 0.3s ease-in-out;
+        z-index: 990;
+        display: block;
+        /* pointer-events: none; */
     }
 
     INPUT:-webkit-autofill,
@@ -164,13 +216,12 @@
     <div class="container-fluid">
 
         <div class="row">
-            <div class="col-md-2">
+            <div class="col-md-2 sidebar">
                 @include('layout.sidebar')
             </div>
             <div class="col-md-10 main">
                 <div class="container mt-auto">
                     <div class="d-flex mt-3 align-items-center justify-content-between">
-                        
                         <div class="align-items-center">
                             <button class="btn btn-primary clone-btn me-2"
                                 data-url="{{ route('l.clone', $account_location->id) }}" title="clone accounts">clone
@@ -186,16 +237,32 @@
             </div>
         </div>
     </div>
+    <div class="backdrop"></div>
     <script src="{{ asset('assets/mdb/js/mdb.umd.min.js') }}"></script>
     <script src="{{ asset('assets/datatables.min.js') }}"></script>
     <script src="{{ asset('assets/select2/js/select2.min.js') }}"></script>
     <script src="{{ asset('assets/perfect-scroll/perfect-scrollbar.min.js') }}"></script>
     <script src="{{ asset('assets/app/color-modes.js') }}"></script>
     <script src="{{ asset('assets/alert/sweetalert2.all.min.js') }}"></script>
+    <script src="{{ asset('assets/jquery/jquery-ui.min.js') }}"></script>
     <script src="{{ asset('assets/app/main.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $('.loader-overlay').hide();
+            (function() {
+                const NavTogglerButton = document.querySelector('.nav-toggler-button');
+                const Sidebar = document.querySelector('.sidebar');
+                const BackDrop = document.querySelector('.backdrop');
+                NavTogglerButton.addEventListener('click', function() {
+                    // alert('Backdrop clicked')
+                    Sidebar.classList.toggle('show');
+                    BackDrop.classList.toggle('show');
+                });
+                BackDrop.addEventListener('click', function() {
+                    Sidebar.classList.remove('show');
+                    BackDrop.classList.remove('show');
+                });
+            })();
             $('button.modify-account').click(function() {
                 const locationId = "{{ $account_location->id }}";
                 const updateUrl = "{{ route('l.update', $account_location->id) }}";
@@ -339,7 +406,7 @@
                     },
                     success: function(response) {
                         if (response.success) {
-                            window.open(response.url, '_blank');
+                            window.location.replace(response.url);
                         } else {
                             alert(`Failed to clone model: ${response.message}`);
                         }
@@ -352,6 +419,31 @@
                         $loader.hide();
                     }
                 });
+            });
+            $('.currencyInput').inputmask({
+                alias: 'currency',
+                prefix: '',
+                rightAlign: false,
+                digits: 2,
+                digitsOptional: false,
+                groupSeparator: ',',
+                autoGroup: true,
+                removeMaskOnSubmit: true,
+                unmaskAsNumber: true
+            });
+
+            $('.currencyInput').keypress(function(e) {
+                var charCode = (e.which) ? e.which : event.keyCode;
+                if ((charCode < 48 || charCode > 57) && charCode !== 46) {
+                    return false;
+                }
+            });
+
+            $('input[type="date"]').datepicker({
+                dateFormat: 'yy-mm-dd', // Adjust the date format as needed 
+                changeMonth: true, // Allows changing the month 
+                changeYear: true, // Allows changing the year 
+                showButtonPanel: true // Adds buttons to clear or close the datepicker 
             });
         });
         const showSuccessAlert = Swal.mixin({

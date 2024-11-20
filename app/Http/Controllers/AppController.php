@@ -32,13 +32,18 @@ class AppController extends Controller
     function getAcronym($str)
     {
         $words = explode(' ', trim($str));
-        $acronym = '';
-        foreach ($words as $word) {
-            if (strlen($word) > 3) {
-                $acronym .= strtoupper($word[0]);
+
+        if (count($words) == 1) {
+            return strtoupper($str);
+        } else {
+            $acronym = '';
+            foreach ($words as $word) {
+                if (strlen($word) > 3) {
+                    $acronym .= strtoupper($word[0]);
+                }
             }
+            return $acronym;
         }
-        return $acronym;
     }
 
 

@@ -7,7 +7,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item text-uppercase">
-                        <a href="#">{{ env('APP_NAME') }}</a>
+                        <a href="#">{{ $account_location->name }}</a>
                     </li>
                     <li class="breadcrumb-item text-uppercase">
                         <a href="#">accounts</a>
@@ -59,9 +59,9 @@
                 <div class="row mb-3">
                     <label for="amount" class="col-sm-2 col-form-label text-uppercase">amount</label>
                     <div class="col-sm-10">
-                        <input {{ $entry->is_reconciled === true ? 'readonly disabled' : '' }} required type="number"
-                            step="0.01" class="form-control @error('amount') is-invalid @enderror" id="amount"
-                            name="amount" value="{{ $entry->amount }}" />
+                        <input {{ $entry->is_reconciled === true ? 'readonly disabled' : '' }} required type="text"
+                            step="0.01" class="currencyInput form-control @error('amount') is-invalid @enderror"
+                            id="amount" name="amount" value="{{ $entry->amount }}" />
                         @error('amount')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -93,10 +93,9 @@
                     </div>
                 </div>
                 <fieldset class="row mb-3">
-                    <label for="date" class="col-form-label text-uppercase col-sm-2 pt-0">date</label>
+                    <label for="date" class="col-form-label text-uppercase col-sm-2 pt-0">payment date</label>
                     <div class="col-sm-10">
-                        <input required type="date"
-                            value="{{ Carbon::parse($entry->created_at)->format('Y-m-d') ?? now()->format('Y-m-d') }}"
+                        <input required type="date" value="{{ Carbon::parse($entry->date)->format('Y-m-d') }}"
                             class="form-control @error('date') is-invalid @enderror" name="date" id="date"
                             placeholder="" />
                         @error('date')
@@ -107,7 +106,7 @@
                 <fieldset class="row mb-3">
                     <label for="value-date" class="col-form-label text-uppercase col-sm-2 pt-0">value date</label>
                     <div class="col-sm-10">
-                        <input required type="date"
+                        <input required type="date" onchange="validateDates()"
                             value="{{ Carbon::parse($entry->value_date)->format('Y-m-d') ?? now()->format('Y-m-d') }}"
                             class="form-control @error('value-date') is-invalid @enderror" name="value-date" id="value-date"
                             placeholder="" />
@@ -127,12 +126,16 @@
 @endsection
 @section('script')
     <script>
+        function validateDates() {
+            var endDate = document.getElementById('date').value;
+            document.getElementById('value-date').max = endDate;
+        }
         const form = document.getElementById('edit-entry');
         form && form.addEventListener('submit', function(e) {
             e.submitter.classList.add('disabled');
             $('.loader-overlay').show().find('.loader-text').text('Updating...')
             return 1;
         });
-        $('textarea[name="description"]').val('{{ $entry->description }}')
+        $('textarea[name="description"]').val('{{ $entry->description ?? 'payment' }}')
     </script>
 @endsection

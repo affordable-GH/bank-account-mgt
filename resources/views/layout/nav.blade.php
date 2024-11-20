@@ -2,7 +2,10 @@
     <ul class="nav" style="z-index: 1092;">
         <div class="container">
             <ul class="navbar-nav flex-row p-2 justify-content-between">
-                <li class="nav-item">
+                <li class="nav-item d-flex align-items-center">
+                    <button type="button" class="btn btn-sm px-1 py-1 me-2 nav-toggler-button">
+                        <i class="bx bx-menu-alt-left fa-2x"></i>
+                    </button>
                     <a class="nav-link" href="{{ route('l.list') }}"><i class="fas fa-home"></i> Home</a>
                 </li>
                 <li class="nav-item d-flex align-items-center">

@@ -7,7 +7,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item text-uppercase">
-                        <a href="#">{{ env('APP_NAME') }}</a>
+                        <a href="#">{{ $account_location->name }}</a>
                     </li>
                     <li class="breadcrumb-item text-uppercase">
                         <a href="#">accounts</a>
@@ -73,9 +73,9 @@
                 <div class="row mb-3">
                     <label for="amount" class="col-sm-2 col-form-label text-uppercase">amount</label>
                     <div class="col-sm-10">
-                        <input required type="number" step="0.01" onfocus="this.select()"
-                            class="form-control @error('amount') is-invalid @enderror" id="amount" name="amount"
-                            value="{{ $transfer->amount }}" />
+                        <input required type="text" step="0.01" onfocus="this.select()"
+                            class="currencyInput form-control @error('amount') is-invalid @enderror" id="amount"
+                            name="amount" value="{{ $transfer->amount }}" />
                         @error('amount')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

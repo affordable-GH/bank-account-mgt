@@ -56,7 +56,7 @@ class EntryController extends Controller
             'amount' => $request->amount,
             'value_date' => $request->value_date ?? now(),
             'reference_number' => $request->reference_number,
-            'created_at' => $request->date ?? now(),
+            'date' => $request->date ?? now(),
         ]);
         $routeName = $request->has('exist') ? 'entries.index' : 'entries.create';
         return redirect()->to(route($routeName, $location))->with('success', 'Entry created successfully');
@@ -93,21 +93,22 @@ class EntryController extends Controller
         if ($entry->account->accountLocation->id !== $location) {
             abort(403, 'Account does not belongs to this location.');
         }
+        // dd($request->all());
         if ($entry->is_reconciled) {
             $fields = [
                 'entry_type' => $request->entry_type,
                 'description' => $request->description,
-                'value_date' => $request->value_date ?? now(),
-                'created_at' => $request->date ?? now(),
+                'value_date' => $request->input('value-date') ?? now(),
+                'date' => $request->input('date') ?? now(),
             ];
         } else {
             $fields = [
                 'entry_type_id' => $request->entry_type,
                 'description' => $request->description,
                 'amount' => $request->amount,
-                'value_date' => $request->value_date ?? now(),
+                'value_date' => $request->input('value-date') ?? now(),
                 'reference_number' => $request->reference_number,
-                'created_at' => $request->date ?? now(),
+                'date' => $request->input('date') ?? now(),
             ];
         }
         // Update entry

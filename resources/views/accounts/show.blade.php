@@ -17,13 +17,6 @@
                     </li>
                 </ol>
             </nav>
-            <div class="d-flex">
-                {{-- @if ($account->entries->isNotEmpty()) --}}
-                <button title="Reconcile Entries" class="btn btn-success reconcile-entries mx-1" disabled>
-                    reconcile <i class="fas fa-check ms-1"></i>
-                </button>
-                {{-- @endif --}}
-            </div>
         </div>
     </nav>
 @section('name')
@@ -32,25 +25,25 @@
 <div class="card shadow-1-soft">
     <div class="card-body">
         <!-- Tabs navs -->
-        <ul class="nav nav-tabs n mb-3" id="ex1" role="tablist">
+        <ul class="nav nav-tabs n mb-3" id="accountTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <a data-mdb-tab-init class="nav-link" id="ex3-tab-3" href="#ex3-tabs-3" role="tab"
-                    aria-controls="ex3-tabs-3" aria-selected="false">account</a>
+                <button data-mdb-tab-init class="nav-link" id="account-tab" role="tab" aria-controls="account"
+                    aria-selected="false" data-mdb-target="#account">account</button>
             </li>
             <li class="nav-item" role="presentation">
-                <a data-mdb-tab-init class="nav-link active" id="ex3-tab-1" href="#ex3-tabs-1" role="tab"
-                    aria-controls="ex3-tabs-1" aria-selected="true">bank entries</a>
+                <button data-mdb-tab-init class="nav-link" id="entries-tab" role="tab" aria-controls="entries"
+                    aria-selected="true" data-mdb-target="#entries">bank entries</button>
             </li>
             <li class="nav-item" role="presentation">
-                <a data-mdb-tab-init class="nav-link" id="ex3-tab-2" href="#ex3-tabs-2" role="tab"
-                    aria-controls="ex3-tabs-2" aria-selected="false">reports</a>
+                <button data-mdb-tab-init class="nav-link" id="reports-tab" role="tab" aria-controls="reports"
+                    aria-selected="false" data-mdb-target="#reports">reports</button>
             </li>
         </ul>
         <!-- Tabs navs -->
 
         <!-- Tabs content -->
-        <div class="tab-content" id="ex2-content">
-            <div class="tab-pane fade show active" id="ex3-tabs-1" role="tabpanel" aria-labelledby="ex3-tab-1">
+        <div class="tab-content" id="account-tab-content">
+            <div class="tab-pane fade" id="entries" role="tabpanel" aria-labelledby="entries">
                 <div class="d-flex align-items-center justify-content-between">
                     <div class="table-action-btns">
                         <button id="excelButton" class="btn text-white me-1" data-mdb-ripple-init
@@ -58,23 +51,28 @@
                             <i class="fas fa-print me-1"></i>
                             Excel
                         </button>
-                        <button id="pdfButton" class="btn text-white mx-1" data-mdb-ripple-init
+                        {{-- <button id="pdfButton" class="btn text-white mx-1" data-mdb-ripple-init
                             style="background-color: #ee4a60;" title="Save table as PDF" type="button">
                             <i class="fas fa-file-pdf me-1"></i>
                             PDF
-                        </button>
+                        </button> --}}
                         <button id="printButton" class="btn text-white ms-1" data-mdb-ripple-init
                             style="background-color: #1179ce;" title="Click to print table" type="button">
                             <i class="fas fa-print me-1"></i>
                             print
                         </button>
                     </div>
-                    @if ($account->accountStatus->status === 'open')
-                        <a role="button" class="btn btn-info"
-                            href="{{ route('entries.create', [$account_location->id, 'account' => $account->id]) }}">
-                            create entry
-                        </a>
-                    @endif
+                    <div class="">
+                        @if ($account->accountStatus->status === 'open')
+                            <a role="button" class="btn btn-info"
+                                href="{{ route('entries.create', [$account_location->id, 'account' => $account->id]) }}">
+                                create entry
+                            </a>
+                        @endif
+                        <button title="Reconcile Entries" class="btn btn-success reconcile-entries mx-1" disabled>
+                            reconcile <i class="fas fa-check ms-1"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table align-middle text-uppercase" id="table-account-entries">
@@ -156,20 +154,82 @@
                     </table>
                 </div>
             </div>
-            <div class="tab-pane fade" id="ex3-tabs-2" role="tabpanel" aria-labelledby="ex3-tab-2">
-                Tab 2 content
+            <div class="tab-pane fade" id="reports" role="tabpanel" aria-labelledby="reports">
+                No reports
             </div>
-            {{-- <div class="tab-pane fade" id="ex3-tabs-3" role="tabpanel" aria-labelledby="ex3-tab-3">
-                Tab 3 content
-            </div> --}}
+            <div class="tab-pane fade" id="account" role="tabpanel" aria-labelledby="account">
+                <div class="container-fluid mt-5">
+                    <div class="d-flex justify-content-between mt-5">
+                        <div class="row">
+                            <div class="col-md-4 d-flex align-items-center">
+                                <span class="p-3 shadow-1-strong">
+                                    <i class="fa-solid fa-2xl fa-building-columns"></i>
+                                </span>
+                            </div>
+                            <div class="col-md-8 d-flex align-items-center">
+                                <ul class="list-unstyled mb-0 fw-semibold">
+                                    <li>{{ $account->account_number }}</li>
+                                    <li class="text-nowrap text-uppercase">{{ $account->bank_name }}</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span
+                                class="btn btn-{{ $account->accountStatus->status === 'open' ? 'success' : 'danger' }}">{{ $account->accountStatus->status }}</span>
+                        </div>
+                    </div>
+                    <div class="row mt-5">
+                        {{-- <h5>details</h5> --}}
+                        <div class="col-4">
+                            <table class="table table-bordered align-middle">
+                                <tbody class="text-uppercase">
+                                    <tr class="">
+                                        <th scope="col">account type</th>
+                                        <td class="fw-semibold" scope="col">{{ $account->accountType->type }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="col">currency</th>
+                                        <td class="fw-semibold">{{ $account->currency }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="col">initial deposit</th>
+                                        <td class="fw-semibold">{{ number_format($account->initial_amount, 2) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="col">current balance</th>
+                                        <td class="fw-semibold">{{ number_format($account->balance, 2) }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-6"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!-- Tabs content -->
     </div>
 </div>
 @endsection
 @section('script')
 <script>
     $(document).ready(function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab');
+        if (tab) {
+            let tabContent = tab.toString().replace(/-tab/, '');
+            $(`#${tab}`).addClass('show active');
+            $(`.tab-pane#${tabContent}`).addClass('show active');
+        } else {
+            $('#account-tab').addClass('show active');
+            $('.tab-pane#account').addClass('show active');
+        }
+
+        // Update query parameter on tab change
+        $('#accountTab button[data-mdb-tab-init]').on('click', function(e) {
+            const tabIndex = $(e.target).attr('id');
+            history.pushState({}, '', `?tab=${tabIndex}`);
+            // location.reload();
+        });
         const ACCOUNT_WITH_ENTRIES_TABLE = new DataTable('#table-account-entries', {
             // responsive: true,
             order: [

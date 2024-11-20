@@ -20,6 +20,7 @@ class Entry extends Model
         'is_reconciled',
         'is_transfer',
         'value_date',
+        'date',
         'transfer_id'
     ];
     protected $orderBy = ['created_at', 'desc'];

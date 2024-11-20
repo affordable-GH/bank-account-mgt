@@ -7,7 +7,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item text-uppercase">
-                        <a href="#">{{ env('APP_NAME') }}</a>
+                        <a href="#">{{ $account_location->name }}</a>
                     </li>
                     <li class="breadcrumb-item text-uppercase">
                         <a href="#">accounts</a>
@@ -49,7 +49,8 @@
                         <select required class="form-select select2 @error('from_account') is-invalid @enderror"
                             name="from_account" id="from_account">
                             @forelse ($accounts as $account)
-                                <option value="{{ $account->id }}">{{ $account->account_address }}</option>
+                                <option value="{{ $account->id }}">
+                                    {{ $account->name . ' - ' . $account->accountLocation->name }}</option>
                             @empty
                             @endforelse
                         </select>
@@ -61,7 +62,8 @@
                         <select required class="form-select select2 @error('to_account') is-invalid @enderror"
                             name="to_account" id="to_account">
                             @forelse ($accounts as $account)
-                                <option value="{{ $account->id }}">{{ $account->account_address }}</option>
+                                <option value="{{ $account->id }}">
+                                    {{ $account->name . ' - ' . $account->accountLocation->name }}</option>
                             @empty
                             @endforelse
                         </select>
@@ -70,9 +72,9 @@
                 <div class="row mb-3">
                     <label for="amount" class="col-sm-2 col-form-label text-uppercase">amount</label>
                     <div class="col-sm-10">
-                        <input required type="number" step="0.01" onfocus="this.select()"
-                            class="form-control @error('amount') is-invalid @enderror" id="amount" name="amount"
-                            value="{{ @old('amount') }}" />
+                        <input required type="text" step="0.01" onfocus="this.select()"
+                            class="currencyInput form-control @error('amount') is-invalid @enderror" id="amount"
+                            name="amount" value="{{ @old('amount') ?? '0.00' }}" />
                         @error('amount')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -89,12 +91,23 @@
                     </div>
                 </div>
                 <fieldset class="row mb-3">
-                    <label for="date" class="col-form-label text-uppercase col-sm-2 pt-0">value date</label>
+                    <label for="date" class="col-form-label text-uppercase col-sm-2 pt-0">payment date</label>
                     <div class="col-sm-10">
                         <input required type="date" value="{{ now()->format('Y-m-d') }}"
                             class="form-control @error('date') is-invalid @enderror" name="date" id="date"
                             placeholder="" />
                         @error('date')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </fieldset>
+                <fieldset class="row mb-3">
+                    <label for="value-date" class="col-form-label text-uppercase col-sm-2 pt-0">value date</label>
+                    <div class="col-sm-10">
+                        <input type="date" value="{{ now()->format('Y-m-d') }}"
+                            class="form-control @error('value-date') is-invalid @enderror" name="value-date" id="value-date"
+                            placeholder="" />
+                        @error('value-date')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>

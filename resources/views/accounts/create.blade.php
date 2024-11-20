@@ -7,10 +7,10 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item text-uppercase">
-                        <a href="#">{{ env('APP_NAME') }}</a>
+                        <a href="#">{{ $account_location->name }}</a>
                     </li>
                     <li class="breadcrumb-item text-uppercase">
-                        <a href="{{route('account.home', $account_location->id)}}">accounts</a>
+                        <a href="{{ route('account.home', $account_location->id) }}">accounts</a>
                     </li>
                     <li class="breadcrumb-item text-uppercase active" aria-current="page">
                         <a href="#">create</a>
@@ -99,9 +99,9 @@
                     <label for="initial_amount" class="col-form-label text-uppercase col-sm-2 pt-0">initial
                         amount</label>
                     <div class="col-sm-10">
-                        <input required type="number" onfocus="this.select()" step="0.01" value="0.00"
-                            class="form-control @error('initial_amount') is-invalid @enderror" id="initial_amount"
-                            name="initial_amount" />
+                        <input required type="text"  value="0" onfocus="this.select()" step="0.01"
+                            class="currencyInput form-control @error('initial_amount') is-invalid @enderror"
+                            id="initial_amount" name="initial_amount" />
                         @error('initial_amount')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

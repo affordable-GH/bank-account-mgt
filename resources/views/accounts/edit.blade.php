@@ -7,7 +7,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item text-uppercase">
-                        <a href="#">{{ env('APP_NAME') }}</a>
+                        <a href="#">{{ $account_location->name }}</a>
                     </li>
                     <li class="breadcrumb-item text-uppercase">
                         <a href="{{ route('account.home', $account_location->id) }}">accounts</a>
@@ -53,7 +53,7 @@
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <label for="bank_namme" class="col-sm-2 col-form-label text-uppercase">bank namme</label>
+                    <label for="bank_namme" class="col-sm-2 col-form-label text-uppercase">bank name</label>
                     <div class="col-sm-10">
                         <input required type="bank_namme" class="form-control @error('bank_namme') is-invalid @enderror"
                             id="bank_namme" name="bank_name" value="{{ $account->bank_name }}" />
@@ -101,9 +101,9 @@
                     <label for="initial_amount" class="col-form-label text-uppercase col-sm-2 pt-0">initial
                         amount</label>
                     <div class="col-sm-10">
-                        <input readonly disabled required type="number" onfocus="this.select()" step="0.01"
+                        <input readonly disabled required type="text" onfocus="this.select()" step="0.01"
                             value="{{ @old('initial_amount') ?? $account->initial_amount }}"
-                            class="form-control @error('initial_amount') is-invalid @enderror" id="initial_amount"
+                            class="currencyInput form-control @error('initial_amount') is-invalid @enderror" id="initial_amount"
                             name="initial_amount" />
                         @error('initial_amount')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -126,7 +126,7 @@
                     </div>
                 </fieldset>
                 <fieldset class="row mb-3">
-                    <label for="created_at" class="col-form-label text-uppercase col-sm-2 pt-0">date</label>
+                    <label for="created_at" class="col-form-label text-uppercase col-sm-2 pt-0">payment date</label>
                     <div class="col-sm-10">
                         <input required type="date" value="{{ now()->format('Y-m-d') }}"
                             class="form-control @error('created_at') is-invalid @enderror" name="created_at" id="created_at"
